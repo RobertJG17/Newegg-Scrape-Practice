@@ -20,21 +20,25 @@ def item_parse(url):
 
 @app.route('/')
 def index():
-    url = 'https://www.newegg.com/Video-Cards-Video-Devices/Category/ID-38'
+    url = 'https://www.newegg.com/Desktop-Graphics-Cards/SubCategory/ID-48?Tid=7709'
     tags = item_parse(url=url)
-    print(filter.item_info(tags))
 
-    return 'yellow'
+    lst = filter.item_info(tags)
+
+    return f'{lst}'
 
 
-# @app.route('/cpu')
-# def cpu_index():
-#     tags = graphics_card_parse()
-#     for tag in tags:
-#         print(f'{tag.a.img.get("title")}, ${tag.find("li", {"class": "price-current"}).strong.text}'
-#               f'{tag.find("li", {"class": "price-current"}).sup.text}')
-#
-#     return 'yellow'
+@app.route('/cpu')
+def cpu_index():
+    url = 'https://www.newegg.com/CPUs-Processors/Category/ID-34'
+    tags = item_parse(url=url)
+
+    price, link, rating = filter.item_info(tags)
+
+    df = pd.DataFrame(data=[price, link, rating], index=['Price', 'Link', 'Rating'])
+    cpu_json = df.to_json()
+
+    return cpu_json
 
 
 if __name__ == '__main__':
