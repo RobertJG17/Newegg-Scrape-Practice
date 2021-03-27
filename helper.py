@@ -40,15 +40,15 @@ def top_match(tags, price, ratio):
             df = df.append(obj, ignore_index=True)
 
     df.sort_values(by="price", ascending=False, inplace=True, ignore_index=True)
-    ret = df.iloc[0].to_dict()
 
+    ret = df.iloc[0].to_dict()
     return ret
 
 
-def parts_selector():
+def parts_selector(price):
     # CPU, MOBO, RAM, GPU, SSD, CASE, PSU
     pc_parts = []
-    price = 1000
+    price = float(price)
 
     # LINKS FROM NEWEGG
     newegg_parts = {
@@ -65,6 +65,8 @@ def parts_selector():
         top_part = top_match(tags, price=price, ratio=newegg_parts[f'{part}']['ratio'])
         pc_parts.append(top_part)
 
+    for part in pc_parts:
+        print(part['name'])
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92
     return pc_parts
 

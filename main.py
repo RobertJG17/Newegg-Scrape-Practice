@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 import helper
 
@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return f'{helper.parts_selector()}'
+    price = request.args['price']
+    return f'{helper.parts_selector(price)}'
 
 
 if __name__ == '__main__':
