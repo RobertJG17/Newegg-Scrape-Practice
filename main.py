@@ -2,7 +2,7 @@ import bs4
 import requests
 import helper
 
-from flask import Flask, current_app
+from flask import Flask, current_app, request
 
 
 app = Flask(__name__)
@@ -20,9 +20,10 @@ def item_parse(url):
 
 @app.route('/')
 def index():
+    price = request.args['price']
+    price = float(price)
     # CPU, MOBO, RAM, GPU, SSD, CASES, PSU
     pc_parts = []
-    price = 1000
 
     # LINKS FROM NEWEGG
     parts = {'gpu': {'link': 'https://www.newegg.com/Desktop-Graphics-Cards/SubCategory/ID-48?Tid=7709', 'ratio': .38},
@@ -38,8 +39,8 @@ def index():
         top_part = helper.top_match(tags, price=price, ratio=parts[f'{part}']['ratio'])
         pc_parts.append(top_part)
 
-    for part in pc_parts:
-        print(part['name'], '\n')
+    # for part in pc_parts:
+        # print(part['name'], '\n')
 
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92
 
