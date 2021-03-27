@@ -4,7 +4,13 @@ import bs4
 import pandas as pd
 
 
-def item_parse(url):
+def item_parse(url, part, pc_parts):
+    # if part == 'mobo':
+    #     if 'LGA' in pc_parts[1]['name']:
+    #         url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007627&isdeptsrh=1'
+    #     else:
+    #         url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1'
+
     result = requests.get(url)
 
     # HTML PARSER
@@ -24,6 +30,8 @@ def top_match(tags, price, ratio):
         tag_name = tag.a.img.get("title")
         tag_href = tag.a.get("href")
 
+        # COMPATIBILITY CHECK
+
         try:
             dollars = tag.find("li", {"class": "price-current"}).strong.text
             cents = tag.find("li", {"class": "price-current"}).sup.text
@@ -42,6 +50,7 @@ def top_match(tags, price, ratio):
     df.sort_values(by="price", ascending=False, inplace=True, ignore_index=True)
 
     ret = df.iloc[0].to_dict()
+
     return ret
 
 
@@ -57,16 +66,17 @@ def parts_selector(price):
         'ram': {'link': 'https://www.newegg.com/Desktop-Memory/SubCategory/ID-147?Tid=7611', 'ratio': .06},
         'ssd': {'link': 'https://www.newegg.com/p/pl?Submit=StoreIM&Category=119&Depa=1', 'ratio': .10},
         'psu': {'link': 'https://www.newegg.com/Power-Supplies/Category/ID-32?Tid=6656', 'ratio': .07},
-        'mobo': {'link': 'https://www.newegg.com/p/pl?Submit=StoreIM&Category=20&Depa=1', 'ratio': .09},
+        'mobo': {'link': 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1', 'ratio': .09},
         'cases': {'link': 'https://www.newegg.com/Computer-Cases/Category/ID-9?Tid=6644', 'ratio': .08}}
 
     for part in newegg_parts.keys():
-        tags = item_parse(url=newegg_parts[f'{part}']['link'])
-        top_part = top_match(tags, price=price, ratio=newegg_parts[f'{part}']['ratio'])
+        tags = item_parse(url=newegg_parts[f'{part}']['link'], part=part, pc_parts=pc_parts)
+        top_part = top_match(tags=tags, price=price, ratio=newegg_parts[f'{part}']['ratio'])
         pc_parts.append(top_part)
 
     for part in pc_parts:
-        print(part['name'])
+        print(part['name'], '\n')
+
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92
     return pc_parts
 
