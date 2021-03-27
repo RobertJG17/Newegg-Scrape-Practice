@@ -9,7 +9,6 @@ app = Flask(__name__)
 
 
 def item_parse(url):
-    # FROM NEWEGG
     result = requests.get(url)
 
     # HTML PARSER
@@ -24,6 +23,8 @@ def index():
     # CPU, MOBO, RAM, GPU, SSD, CASES, PSU
     pc_parts = []
     price = 1000
+
+    # LINKS FROM NEWEGG
     parts = {'gpu': {'link': 'https://www.newegg.com/Desktop-Graphics-Cards/SubCategory/ID-48?Tid=7709', 'ratio': .38},
              'cpu': {'link': 'https://www.newegg.com/CPUs-Processors/Category/ID-34', 'ratio': .20},
              'ram': {'link': 'https://www.newegg.com/Desktop-Memory/SubCategory/ID-147?Tid=7611', 'ratio': .06},
