@@ -5,17 +5,21 @@ import pandas as pd
 
 
 def item_parse(url, part, pc_parts):
-    # if part == 'mobo':
-    #     if 'LGA' in pc_parts[1]['name']:
-    #         url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007627&isdeptsrh=1'
-    #     else:
-    #         url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1'
 
+    # CPU-MOBO COMPATIBILITY CHECK
+    if part == 'mobo':
+        if 'LGA' in pc_parts[1]['name']:
+            url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007627&isdeptsrh=1'
+        else:
+            url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1'
+
+    # STORING URL FOR SCRAPE
     result = requests.get(url)
 
-    # HTML PARSER
+    # SOUP OBJECT INSTANCE, PARSING WITH LXML
     soup = bs4.BeautifulSoup(result.text, 'lxml')
 
+    # CREATING ARRAY OF TAGS THAT CORRESPOND TO DIV TYPE WITH CLASS ITEM CONTAINER
     soup_tags = soup.findAll("div", {"class": "item-container"})
     return soup_tags
 
@@ -23,16 +27,18 @@ def item_parse(url, part, pc_parts):
 def top_match(tags, price, ratio):
     df = pd.DataFrame()
 
+    # LOOPING THROUGH TAGS AND EXTRACTING PERTINENT INFORMATION
     for tag in tags:
+        # USING RATIO AND TOTAL PRICE TO CALCULATE ALLOTMENT FOR PC PART
         price_point = price * ratio
+
+        # CREATING KEY-VALUE PAIRING TO HOLD ATTRIBUTES OF PARTS
         obj = {}
 
-        tag_name = tag.a.img.get("title")
-        tag_href = tag.a.get("href")
-
-        # COMPATIBILITY CHECK
-
+        # ENSURING THAT THE INFORMATION WE ARE TRYING TO ACCESS EXISTS, IF NOT, IGNORE ITEM AND CONTINUE
         try:
+            tag_name = tag.a.img.get("title")
+            tag_href = tag.a.get("href")
             dollars = tag.find("li", {"class": "price-current"}).strong.text
             cents = tag.find("li", {"class": "price-current"}).sup.text
             tag_rating = tag.find("a", {"class": "item-rating"}).get("title")[-1]
@@ -44,6 +50,7 @@ def top_match(tags, price, ratio):
         obj['href'] = f'{tag_href}'
         obj['rating'] = float(tag_rating)
 
+        # APPEND ONLY THOSE PC PARTS THAT FALL UNDER OUR ALLOTTED AMOUNT
         if obj['price'] <= price_point:
             df = df.append(obj, ignore_index=True)
 
@@ -66,7 +73,7 @@ def parts_selector(price):
         'ram': {'link': 'https://www.newegg.com/Desktop-Memory/SubCategory/ID-147?Tid=7611', 'ratio': .06},
         'ssd': {'link': 'https://www.newegg.com/p/pl?Submit=StoreIM&Category=119&Depa=1', 'ratio': .10},
         'psu': {'link': 'https://www.newegg.com/Power-Supplies/Category/ID-32?Tid=6656', 'ratio': .07},
-        'mobo': {'link': 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1', 'ratio': .09},
+        'mobo': {'link': None, 'ratio': .09},
         'cases': {'link': 'https://www.newegg.com/Computer-Cases/Category/ID-9?Tid=6644', 'ratio': .08}}
 
     for part in newegg_parts.keys():
