@@ -1,10 +1,16 @@
-def item_info(tags):
-    corys_list = []
-    index = 0
+import pandas as pd
+
+
+def top_match(tags, price, ratio):
+    df = pd.DataFrame()
+
     for tag in tags:
+        price_point = price * ratio
         obj = {}
+
         tag_name = tag.a.img.get("title")
         tag_href = tag.a.get("href")
+
         try:
             dollars = tag.find("li", {"class": "price-current"}).strong.text
             cents = tag.find("li", {"class": "price-current"}).sup.text
@@ -17,6 +23,11 @@ def item_info(tags):
         obj['href'] = f'{tag_href}'
         obj['rating'] = float(tag_rating)
 
-        corys_list.append(obj)
+        if obj['price'] <= price_point:
+            df = df.append(obj, ignore_index=True)
 
-    return corys_list
+    df.sort_values(by="price", ascending=False, inplace=True, ignore_index=True)
+    ret = df.iloc[0].to_dict()
+
+    return ret
+
