@@ -4,17 +4,17 @@ import bs4
 import pandas as pd
 
 
-def item_parse(url, part, pc_parts):
+def item_parse(parts_url, part, pc_parts):
 
     # CPU-MOBO COMPATIBILITY CHECK
     if part == 'mobo':
-        if 'LGA' in pc_parts[1]['name']:
-            url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007627&isdeptsrh=1'
+        if 'LGA' in pc_parts[1]["name"]:
+            parts_url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007627&isdeptsrh=1'
         else:
-            url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1'
+            parts_url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1'
 
     # STORING URL FOR SCRAPE
-    result = requests.get(url)
+    result = requests.get(parts_url)
 
     # SOUP OBJECT INSTANCE, PARSING WITH LXML
     soup = bs4.BeautifulSoup(result.text, 'lxml')
@@ -29,6 +29,7 @@ def top_match(tags, price, ratio):
 
     # LOOPING THROUGH TAGS AND EXTRACTING PERTINENT INFORMATION
     for tag in tags:
+
         # USING RATIO AND TOTAL PRICE TO CALCULATE ALLOTMENT FOR PC PART
         price_point = price * ratio
 
@@ -38,24 +39,29 @@ def top_match(tags, price, ratio):
         # ENSURING THAT THE INFORMATION WE ARE TRYING TO ACCESS EXISTS, IF NOT, IGNORE ITEM AND CONTINUE
         try:
             tag_name = tag.a.img.get("title")
+            tag_img = tag.a.img.get("src")
             tag_href = tag.a.get("href")
-            dollars = tag.find("li", {"class": "price-current"}).strong.text
-            cents = tag.find("li", {"class": "price-current"}).sup.text
+            tag_dollars = tag.find("li", {"class": "price-current"}).strong.text
+            tag_cents = tag.find("li", {"class": "price-current"}).sup.text
             tag_rating = tag.find("a", {"class": "item-rating"}).get("title")[-1]
         except AttributeError:
             continue
 
-        obj['name'] = tag_name
-        obj['price'] = float(f'{dollars}{cents}'.replace(',', ''))
-        obj['href'] = f'{tag_href}'
-        obj['rating'] = float(tag_rating)
+        # APPENDING ALL SCRAPED ATTRIBUTES TO A DICTIONARY
+        obj["name"] = tag_name
+        obj["price"] = float(f'{tag_dollars}{tag_cents}'.replace(',', ''))
+        obj["href"] = f'{tag_href}'
+        obj["rating"] = float(tag_rating)
+        obj["image"] = tag_img
 
         # APPEND ONLY THOSE PC PARTS THAT FALL UNDER OUR ALLOTTED AMOUNT
-        if obj['price'] <= price_point:
+        if obj["price"] <= price_point:
             df = df.append(obj, ignore_index=True)
 
+    # SORTING THE VALID PARTS BY PRICE IN DESCENDING ORDER
     df.sort_values(by="price", ascending=False, inplace=True, ignore_index=True)
 
+    # RETURNING THE FIRST ROW OF OUR DATAFRAME (this is the most expensive product that doesn't exceed our price point)
     ret = df.iloc[0].to_dict()
 
     return ret
@@ -76,13 +82,13 @@ def parts_selector(price):
         'mobo': {'link': None, 'ratio': .09},
         'cases': {'link': 'https://www.newegg.com/Computer-Cases/Category/ID-9?Tid=6644', 'ratio': .08}}
 
-    for part in newegg_parts.keys():
-        tags = item_parse(url=newegg_parts[f'{part}']['link'], part=part, pc_parts=pc_parts)
+    for part in sorted(newegg_parts.keys()):
+        tags = item_parse(parts_url=newegg_parts[f'{part}']['link'], part=part, pc_parts=pc_parts)
         top_part = top_match(tags=tags, price=price, ratio=newegg_parts[f'{part}']['ratio'])
         pc_parts.append(top_part)
 
     for part in pc_parts:
-        print(part['name'], '\n')
+        print(part["name"], '\n')
 
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92
     return pc_parts
