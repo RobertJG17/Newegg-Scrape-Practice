@@ -13,7 +13,10 @@ def scrape(tags, site, price, ratio):
         # CREATING KEY-VALUE PAIRING TO HOLD ATTRIBUTES OF PARTS
         obj = {}
 
-        if site is 'newegg':
+        (tag_name, tag_img, tag_href, tag_num_of_ratings, tag_dollars, tag_cents, tag_rating, tag_price) = \
+            (None, None, None, None, None, None, None, None)
+
+        if site == 'newegg':
             try:
                 tag_name = tag.a.img.get("title")
                 tag_img = tag.a.img.get("src")
@@ -26,7 +29,7 @@ def scrape(tags, site, price, ratio):
             except AttributeError:
                 continue
 
-        elif site is 'microcenter':
+        elif site == 'microcenter':
             try:
                 tag_name = tag.find("a", {"class": "image"}).get("data-name")
                 tag_img = tag.find("img", {"class": "SearchResultProductImage"}).get("src")
@@ -43,7 +46,7 @@ def scrape(tags, site, price, ratio):
             obj["price"] = float(f'{tag_dollars}{tag_cents}'.replace(',', ''))
         elif site is 'microcenter':
             obj["price"] = float(tag_price)
-        obj["href"] = f'{tag_href}'
+        obj["href"] = f'https://www.microcenter.com{tag_href}'
         obj["rating"] = float(tag_rating[0])
         obj["image"] = tag_img
         try:
