@@ -6,19 +6,25 @@ from scraper import scrape
 from parts_info import newegg_parts, microcenter_parts
 
 
-def item_parse(parts_url, part, pc_parts, site):
+def compatibility_check(parts_url, part, pc_parts, site):
     # CPU-MOBO COMPATIBILITY CHECK
-    if part == 'mobo' and site is 'newegg':
+    if part == 'mobo' and site == 'newegg':
         if 'LGA' in pc_parts[1]["name"]:
             parts_url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007627&isdeptsrh=1'
         else:
             parts_url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1'
 
-    elif part == 'mobo' and site is 'microcenter':
+    elif part == 'mobo' and site == 'microcenter':
         if 'LGA' in pc_parts[1]["name"]:
             parts_url = 'https://www.microcenter.com/category/4294966996,4294818573/intel-based-motherboards'
         else:
             parts_url = 'https://www.microcenter.com/search/search_results.aspx?N=4294966996+4294818892&NTK=all&sortby=match&rpp=96'
+    return parts_url
+
+
+def item_parse(parts_url, part, pc_parts, site):
+
+    parts_url = compatibility_check(parts_url, part, pc_parts, site)
 
     # STORING URL FOR SCRAPE
     result = requests.get(parts_url)
@@ -68,7 +74,7 @@ def parts_selector(price):
         pc_parts.append(top_part)
 
     for part in pc_parts:
-        print(part["href"], '\n')
+        print(part["name"], '\n')
 
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92 comment
     return pc_parts
