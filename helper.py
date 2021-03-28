@@ -68,7 +68,7 @@ def parts_selector(price):
         pc_parts.append(top_part)
 
     for part in pc_parts:
-        print(part["name"], '\n')
+        print(part["href"], '\n')
 
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92 comment
     return pc_parts
