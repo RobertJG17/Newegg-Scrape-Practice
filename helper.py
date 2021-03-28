@@ -101,5 +101,5 @@ def parts_selector(price):
     for part in pc_parts:
         print(part["name"], '\n')
 
-    # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92
+    # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92 comment
     return pc_parts
