@@ -33,9 +33,9 @@ def item_parse(parts_url, part, pc_parts, site):
     soup = bs4.BeautifulSoup(result.text, 'lxml')
 
     # CREATING ARRAY OF TAGS THAT CORRESPOND TO SPECIFIED TAG
-    if site is 'newegg':
+    if site == 'newegg':
         soup_tags = soup.findAll("div", {"class": "item-container"})
-    elif site is 'microcenter':
+    elif site == 'microcenter':
         soup_tags = soup.findAll("li", {"class": "product_wrapper"})
     else:
         soup_tags = ''
