@@ -9,7 +9,8 @@ CORS(app)
 @app.route('/')
 def index():
     price = request.args['price']
-    return {"parts": helper.parts_selector(price)}
+    return {"newegg_build": helper.parts_selector(price=price, site='newegg'),
+            "microcenter_build": helper.parts_selector(price=price, site='microcenter')}
 
 
 if __name__ == '__main__':
