@@ -5,7 +5,6 @@ import pandas as pd
 
 
 def item_parse(parts_url, part, pc_parts):
-
     # CPU-MOBO COMPATIBILITY CHECK
     if part == 'mobo':
         if 'LGA' in pc_parts[1]["name"]:
@@ -41,6 +40,8 @@ def top_match(tags, price, ratio):
             tag_name = tag.a.img.get("title")
             tag_img = tag.a.img.get("src")
             tag_href = tag.a.get("href")
+            tag_num_of_ratings = \
+                tag.find("span", {"class": "item-rating-num"}).text.replace('(', '').replace(')', '').replace(',', '')
             tag_dollars = tag.find("li", {"class": "price-current"}).strong.text
             tag_cents = tag.find("li", {"class": "price-current"}).sup.text
             tag_rating = tag.find("a", {"class": "item-rating"}).get("title")[-1]
@@ -53,13 +54,14 @@ def top_match(tags, price, ratio):
         obj["href"] = f'{tag_href}'
         obj["rating"] = float(tag_rating)
         obj["image"] = tag_img
+        obj["num_ratings"] = int(tag_num_of_ratings)
 
         # APPEND ONLY THOSE PC PARTS THAT FALL UNDER OUR ALLOTTED AMOUNT
         if obj["price"] <= price_point:
             df = df.append(obj, ignore_index=True)
 
     # SORTING THE VALID PARTS BY PRICE IN DESCENDING ORDER
-    df.sort_values(by=["price", "rating"], ascending=False, inplace=True, ignore_index=True)
+    df.sort_values(by=["price", "num_ratings", "rating"], ascending=False, inplace=True, ignore_index=True)
 
     # RETURNING THE FIRST ROW OF OUR DATAFRAME (this is the most expensive product that doesn't exceed our price point)
     ret = df.iloc[0].to_dict()
@@ -74,17 +76,24 @@ def parts_selector(price):
 
     # LINKS FROM NEWEGG
     newegg_parts = {
-        'gpu': {'link': 'https://www.newegg.com/Desktop-Graphics-Cards/SubCategory/ID-48?Tid=7709', 'ratio': .38},
-        'cpu': {'link': 'https://www.newegg.com/CPUs-Processors/Category/ID-34', 'ratio': .20},
-        'ram': {'link': 'https://www.newegg.com/Desktop-Memory/SubCategory/ID-147?Tid=7611', 'ratio': .09},
-        'ssd': {'link': 'https://www.newegg.com/p/pl?Submit=StoreIM&Category=119&Depa=1', 'ratio': .065},
-        'psu': {'link': 'https://www.newegg.com/Power-Supplies/Category/ID-32?Tid=6656', 'ratio': .07},
-        'mobo': {'link': None, 'ratio': .10},
-        'cases': {'link': 'https://www.newegg.com/Computer-Cases/Category/ID-9?Tid=6644', 'ratio': .065}}
+        'gpu': {'link': 'https://www.newegg.com/Desktop-Graphics-Cards/SubCategory/ID-48?Tid=7709',
+                'ratio': {'gaming': .42, 'productivity': .38}},
+        'cpu': {'link': 'https://www.newegg.com/CPUs-Processors/Category/ID-34',
+                'ratio': {'gaming': .19, 'productivity': .20}},
+        'ram': {'link': 'https://www.newegg.com/Desktop-Memory/SubCategory/ID-147?Tid=7611',
+                'ratio': {'gaming': .1, 'productivity': .09}},
+        'ssd': {'link': 'https://www.newegg.com/p/pl?Submit=StoreIM&Category=119&Depa=1',
+                'ratio': {'gaming': .065, 'productivity': .065}},
+        'psu': {'link': 'https://www.newegg.com/Power-Supplies/Category/ID-32?Tid=6656',
+                'ratio': {'gaming': .07, 'productivity': .07}},
+        'mobo': {'link': None,
+                'ratio': {'gaming': .11, 'productivity': .10}},
+        'cases': {'link': 'https://www.newegg.com/Computer-Cases/Category/ID-9?Tid=6644',
+                'ratio': {'gaming': .065, 'productivity': .065}}}
 
     for part in sorted(newegg_parts.keys()):
         tags = item_parse(parts_url=newegg_parts[f'{part}']['link'], part=part, pc_parts=pc_parts)
-        top_part = top_match(tags=tags, price=price, ratio=newegg_parts[f'{part}']['ratio'])
+        top_part = top_match(tags=tags, price=price, ratio=newegg_parts[f'{part}']['ratio']['gaming'])
         pc_parts.append(top_part)
 
     for part in pc_parts:
@@ -92,4 +101,3 @@ def parts_selector(price):
 
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92
     return pc_parts
-
