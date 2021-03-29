@@ -1,14 +1,10 @@
 from flask import Flask, request
 from flask_cors import CORS
 import helper
-import os
-import parts_info
+
 
 app = Flask(__name__)
 CORS(app)
-
-os.environ['newegg_parts'] = parts_info.newegg_parts
-os.environ['microcenter_parts'] = parts_info.microcenter_parts
 
 
 @app.route('/')
