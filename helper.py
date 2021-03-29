@@ -1,7 +1,6 @@
 import requests
 import bs4
 
-import pandas as pd
 from scraper import scrape
 from parts_info import newegg_parts, microcenter_parts
 
@@ -10,9 +9,9 @@ def compatibility_check(parts_url, part, pc_parts, site):
     # CPU-MOBO COMPATIBILITY CHECK
     if part == 'mobo' and site == 'newegg':
         if 'LGA' in pc_parts[1]["name"]:
-            parts_url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007627&isdeptsrh=1'
+            parts_url = 'https://www.newegg.com/Intel-Motherboards/SubCategory/ID-280?Tid=7627&PageSize=96'
         else:
-            parts_url = 'https://www.newegg.com/p/pl?d=motherboards&N=100007625&isdeptsrh=1'
+            parts_url = 'https://www.newegg.com/AMD-Motherboards/SubCategory/ID-22?Tid=7625&PageSize=96'
 
     elif part == 'mobo' and site == 'microcenter':
         if 'LGA' in pc_parts[1]["name"]:
@@ -33,9 +32,9 @@ def item_parse(parts_url, part, pc_parts, site):
     soup = bs4.BeautifulSoup(result.text, 'lxml')
 
     # CREATING ARRAY OF TAGS THAT CORRESPOND TO SPECIFIED TAG
-    if site is 'newegg':
+    if site == 'newegg':
         soup_tags = soup.findAll("div", {"class": "item-container"})
-    elif site is 'microcenter':
+    elif site == 'microcenter':
         soup_tags = soup.findAll("li", {"class": "product_wrapper"})
     else:
         soup_tags = ''
@@ -56,25 +55,31 @@ def top_match(tags, price, ratio, site):
     return ret
 
 
-def parts_selector(price):
+def parts_selector(price, site):
     # CPU, MOBO, RAM, GPU, SSD, CASE, PSU
     pc_parts = []
     price = float(price)
 
     # LINKS FROM NEWEGG
+    if site == 'newegg':
+        for part in sorted(newegg_parts.keys()):
+            tags = item_parse(parts_url=newegg_parts[part]['link'], part=part, pc_parts=pc_parts, site=site)
+            top_part = top_match(tags=tags, price=price, ratio=newegg_parts[part]['ratio']['gaming'], site=site)
+            pc_parts.append(top_part)
+        print("NEWEGG BUILD:")
+        for part in pc_parts:
+            print(part["name"], '\n')
 
-    # for part in sorted(newegg_parts.keys()):
-    #     tags = item_parse(parts_url=newegg_parts[f'{part}']['link'], part=part, pc_parts=pc_parts, site='newegg')
-    #     top_part = top_match(tags=tags, price=price, ratio=newegg_parts[f'{part}']['ratio']['gaming'], site='newegg')
-    #     pc_parts.append(top_part)
+    if site == 'microcenter':
+        for part in sorted(microcenter_parts.keys()):
+            tags = item_parse(parts_url=microcenter_parts[part]['link'], part=part, pc_parts=pc_parts, site=site)
+            top_part = top_match(tags=tags, price=price, ratio=microcenter_parts[part]['ratio']['gaming'], site=site)
+            pc_parts.append(top_part)
+        print("MICROCENTER BUILD:")
+        for part in pc_parts:
+            print(part["name"], '\n')
 
-    for part in sorted(microcenter_parts.keys()):
-        tags = item_parse(parts_url=microcenter_parts[f'{part}']['link'], part=part, pc_parts=pc_parts, site='microcenter')
-        top_part = top_match(tags=tags, price=price, ratio=microcenter_parts[f'{part}']['ratio']['gaming'], site='microcenter')
-        pc_parts.append(top_part)
 
-    for part in pc_parts:
-        print(part["name"], '\n')
 
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92 comment
     return pc_parts
