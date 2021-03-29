@@ -1,6 +1,31 @@
 import pandas as pd
 
 
+def set_structure(site,
+                  tag_name, tag_img, tag_href, tag_num_of_ratings,
+                  tag_dollars, tag_cents, tag_rating, tag_price):
+
+    # APPENDING ALL SCRAPED ATTRIBUTES TO A DICTIONARY
+    obj = {"name": tag_name}
+
+    if site == 'newegg':
+        obj["price"] = float(f'{tag_dollars}{tag_cents}'.replace(',', ''))
+        obj["href"] = f'{tag_href}'
+    elif site == 'microcenter':
+        obj["price"] = float(tag_price)
+        obj["href"] = f'https://www.microcenter.com{tag_href}'
+
+    try:
+        obj["num_ratings"] = int(tag_num_of_ratings.replace('reviews', '').lstrip(' ').rstrip(' '))
+    except ValueError:
+        obj["num_ratings"] = int(tag_num_of_ratings.replace('review', '').lstrip(' ').rstrip(' '))
+
+    obj["rating"] = float(tag_rating[0])
+    obj["image"] = tag_img
+
+    return obj
+
+
 def scrape(tags, site, price, ratio):
 
     df = pd.DataFrame()
@@ -11,7 +36,6 @@ def scrape(tags, site, price, ratio):
         price_point = price * ratio
 
         # CREATING KEY-VALUE PAIRING TO HOLD ATTRIBUTES OF PARTS
-        obj = {}
 
         (tag_name, tag_img, tag_href, tag_num_of_ratings, tag_dollars, tag_cents, tag_rating, tag_price) = \
             (None, None, None, None, None, None, None, None)
@@ -40,19 +64,9 @@ def scrape(tags, site, price, ratio):
             except AttributeError:
                 continue
 
-        # APPENDING ALL SCRAPED ATTRIBUTES TO A DICTIONARY
-        obj["name"] = tag_name
-        if site is 'newegg':
-            obj["price"] = float(f'{tag_dollars}{tag_cents}'.replace(',', ''))
-        elif site is 'microcenter':
-            obj["price"] = float(tag_price)
-        obj["href"] = f'https://www.microcenter.com{tag_href}'
-        obj["rating"] = float(tag_rating[0])
-        obj["image"] = tag_img
-        try:
-            obj["num_ratings"] = int(tag_num_of_ratings.replace('reviews', '').lstrip(' ').rstrip(' '))
-        except ValueError:
-            obj["num_ratings"] = int(tag_num_of_ratings.replace('review', '').lstrip(' ').rstrip(' '))
+        obj = set_structure(site,
+                  tag_name, tag_img, tag_href, tag_num_of_ratings,
+                  tag_dollars, tag_cents, tag_rating, tag_price)
 
         # APPEND ONLY THOSE PC PARTS THAT FALL UNDER OUR ALLOTTED AMOUNT
         if obj["price"] <= price_point:
