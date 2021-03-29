@@ -38,7 +38,7 @@ def item_parse(parts_url, part, pc_parts, site):
         soup_tags = soup.findAll("li", {"class": "product_wrapper"})
     else:
         soup_tags = ''
-
+    print(soup_tags)
     return soup_tags
 
 
