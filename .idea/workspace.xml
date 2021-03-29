@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9d7d9c2a-62ba-41ce-b596-db10a489c0fa" name="Default Changelist" comment="" />
+    <list default="true" id="9d7d9c2a-62ba-41ce-b596-db10a489c0fa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/BS4 Practice.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BS4 Practice.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/helper.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -132,5 +141,23 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1419" height="270" key="GridCell.Tab.0.bottom" timestamp="1616995588268">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="270" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1616995588268" />
+    <state width="1419" height="270" key="GridCell.Tab.0.center" timestamp="1616995588267">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="270" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1616995588267" />
+    <state width="1419" height="270" key="GridCell.Tab.0.left" timestamp="1616995588264">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="270" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1616995588264" />
+    <state width="1419" height="270" key="GridCell.Tab.0.right" timestamp="1616995588267">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="270" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1616995588267" />
   </component>
 </project>
