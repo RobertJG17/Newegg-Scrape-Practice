@@ -47,7 +47,7 @@ def top_match(tags, price, ratio, site):
     df = scrape(tags, site, price, ratio)
 
     # SORTING THE VALID PARTS BY PRICE IN DESCENDING ORDER
-    print(df[["name", "rating", "price"]])
+    print(df["name"])
     df.sort_values(by=["price", "num_ratings", "rating"], ascending=False, inplace=True, ignore_index=True)
 
     # RETURNING THE FIRST ROW OF OUR DATAFRAME (this is the most expensive product that doesn't exceed our price point)
