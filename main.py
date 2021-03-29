@@ -14,9 +14,8 @@ def index():
 @app.route('/parts')
 def build():
     price = request.args['price']
-    return {
-            "microcenter_build": helper.parts_selector(price=price, site='microcenter'),
-            "newegg_build": helper.parts_selector(price=price, site='newegg')}
+    return {"newegg_build": helper.parts_selector(price=price, site='newegg'),
+            "microcenter_build": helper.parts_selector(price=price, site='microcenter')}
 
 
 if __name__ == '__main__':
