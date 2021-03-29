@@ -69,7 +69,7 @@ def scrape(tags, site, price, ratio):
                   tag_dollars, tag_cents, tag_rating, tag_price)
 
         # APPEND ONLY THOSE PC PARTS THAT FALL UNDER OUR ALLOTTED AMOUNT
-        print(len(site, df))
+        print(len(site), df)
         if obj["price"] <= price_point:
             df = df.append(obj, ignore_index=True)
 
