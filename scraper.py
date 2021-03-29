@@ -31,14 +31,11 @@ def scrape(tags, site, price, ratio):
     df = pd.DataFrame()
 
     # LOOPING THROUGH TAGS AND EXTRACTING PERTINENT INFORMATION
-    index = 0
     for tag in tags:
         # USING RATIO AND TOTAL PRICE TO CALCULATE ALLOTMENT FOR PC PART
         price_point = price * ratio
 
         # CREATING KEY-VALUE PAIRING TO HOLD ATTRIBUTES OF PARTS
-        print(index)
-        index += 1
         (tag_name, tag_img, tag_href, tag_num_of_ratings, tag_dollars, tag_cents, tag_rating, tag_price) = \
             (None, None, None, None, None, None, None, None)
 
@@ -71,8 +68,8 @@ def scrape(tags, site, price, ratio):
                   tag_dollars, tag_cents, tag_rating, tag_price)
 
         # APPEND ONLY THOSE PC PARTS THAT FALL UNDER OUR ALLOTTED AMOUNT
-        print(len(df))
         if obj["price"] <= price_point:
             df = df.append(obj, ignore_index=True)
 
+    print(len(df))
     return df
