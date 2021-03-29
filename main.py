@@ -15,7 +15,8 @@ def index():
 def build():
     price = request.args['price']
     return {"newegg_build": helper.parts_selector(price=price, site='newegg'),
-            "microcenter_build": helper.parts_selector(price=price, site='microcenter')}
+            # "microcenter_build": helper.parts_selector(price=price, site='microcenter')
+            }
 
 
 if __name__ == '__main__':
