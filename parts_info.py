@@ -28,7 +28,7 @@ microcenter_parts = {
                 'ratio': {'gaming': .1, 'productivity': .10}},
         'hdd': {'link': 'https://www.microcenter.com/category/4294945772/internal-hard-drives',
                 'ratio': {'gaming': .07, 'productivity': .07}},
-        'psu': {'link': 'https://www.microcenter.com/search/search_results.aspx?N=0&NTT=power+supply&NTK=all&sortby=match&rpp=96',
+        'psu': {'link': 'https://www.microcenter.com/search/search_results.aspx?Ntk=all&sortby=match&N=4294966654&myStore=false',
                 'ratio': {'gaming': .07, 'productivity': .07}},
         'mobo': {'link': None,
                 'ratio': {'gaming': .11, 'productivity': .09}},
