@@ -36,7 +36,6 @@ def scrape(tags, site, price, ratio):
         price_point = price * ratio
 
         # CREATING KEY-VALUE PAIRING TO HOLD ATTRIBUTES OF PARTS
-
         (tag_name, tag_img, tag_href, tag_num_of_ratings, tag_dollars, tag_cents, tag_rating, tag_price) = \
             (None, None, None, None, None, None, None, None)
 
@@ -72,4 +71,5 @@ def scrape(tags, site, price, ratio):
         if obj["price"] <= price_point:
             df = df.append(obj, ignore_index=True)
 
+    print(len(df))
     return df
