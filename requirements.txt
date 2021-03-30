@@ -24,3 +24,4 @@ soupsieve==2.1
 typing-extensions==3.7.4.3
 Werkzeug==1.0.1
 yarl==1.6.3
+dill~=0.3.3

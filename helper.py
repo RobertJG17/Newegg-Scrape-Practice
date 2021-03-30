@@ -4,6 +4,9 @@ import bs4
 from scraper import scrape
 from parts_info import newegg_parts, microcenter_parts
 
+import concurrent
+from concurrent.futures import ProcessPoolExecutor
+
 
 def compatibility_check(parts_url, part, pc_parts, site):
     # CPU-MOBO COMPATIBILITY CHECK
@@ -23,7 +26,8 @@ def compatibility_check(parts_url, part, pc_parts, site):
 
 def item_parse(parts_url, part, pc_parts, site):
 
-    parts_url = compatibility_check(parts_url, part, pc_parts, site)
+    # parts_url = compatibility_check(parts_url, part, pc_parts, site)
+    print(parts_url, part, pc_parts, site)
 
     # STORING URL FOR SCRAPE
     result = requests.get(parts_url)
@@ -62,13 +66,18 @@ def parts_selector(price, site):
 
     # LINKS FROM NEWEGG
     if site == 'newegg':
-        for part in sorted(newegg_parts.keys()):
-            tags = item_parse(parts_url=newegg_parts[part]['link'], part=part, pc_parts=pc_parts, site=site)
-            top_part = top_match(tags=tags, price=price, ratio=newegg_parts[part]['ratio']['gaming'], site=site)
-            pc_parts.append(top_part)
+        # for part in sorted(newegg_parts.keys()):
+        #     tags = item_parse(parts_url=newegg_parts[part]['link'], part=part, pc_parts=pc_parts, site=site)
+        #     top_part = top_match(tags=tags, price=price, ratio=newegg_parts[part]['ratio']['gaming'], site=site)
+        #     pc_parts.append(top_part)
+        with ProcessPoolExecutor(max_workers=None) as executor:
+            futures = [executor.submit(item_parse, newegg_parts[part]['link'], part, pc_parts, site) for part in newegg_parts.keys()]
+
+            tags = [future.result() for future in concurrent.futures.as_completed(futures)]
+            print(tags)
         print("NEWEGG BUILD:")
-        for part in pc_parts:
-            print(part["name"], '\n')
+        # for part in pc_parts:
+        #     print(part["name"], '\n')
 
     if site == 'microcenter':
         for part in sorted(microcenter_parts.keys()):
@@ -81,3 +90,7 @@ def parts_selector(price, site):
 
     # pcpartpicker: https://pcpartpicker.com/list/, price: 1014.92 comment
     return pc_parts
+
+
+if __name__ == '__main__':
+    print("OI")
