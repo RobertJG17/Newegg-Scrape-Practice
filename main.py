@@ -19,6 +19,16 @@ def build():
             "microcenter_build": helper.parts_selector(price=price, site='microcenter')
             }
 
+@app.route('/newegg')
+def newegg():
+    price = request.args['price']
+    return {"newegg_build": helper.parts_selector(price=price, site='newegg')}
+
+@app.route('/microcenter')
+def microcenter():
+    price = request.args['price']
+    return {"microcenter_build": helper.parts_selector(price=price, site='microcenter')}           
+
 
 if __name__ == '__main__':
     app.run()
