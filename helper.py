@@ -26,7 +26,8 @@ def item_parse(parts_url, part, pc_parts, site):
     parts_url = compatibility_check(parts_url, part, pc_parts, site)
 
     # STORING URL FOR SCRAPE
-    result = requests.get(parts_url)
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
+    result = requests.get(parts_url, headers=headers)
 
     # SOUP OBJECT INSTANCE, PARSING WITH LXML
     soup = bs4.BeautifulSoup(result.text, 'lxml')
